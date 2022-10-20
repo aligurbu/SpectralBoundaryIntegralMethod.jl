@@ -1,0 +1,13 @@
+name = "SpectralBoundaryIntegralMethod"
+uuid = "0fd714d7-8c4c-4feb-8e75-2ef96141c1b3"
+authors = ["Ali Gurbuz"]
+version = "0.1.0"
+
+[compat]
+julia = "1.8"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
