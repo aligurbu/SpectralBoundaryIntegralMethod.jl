@@ -1,5 +1,7 @@
 module SpectralBoundaryIntegralMethod
+using Revise
 
-# Write your package code here.
+addme(x,y) = x+y
+export addme
 
 end
