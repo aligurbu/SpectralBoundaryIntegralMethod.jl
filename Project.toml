@@ -5,6 +5,7 @@ version = "0.1.0"
 
 [deps]
 AssociatedLegendrePolynomials = "2119f1ac-fb78-50f5-8cc0-dda848ebdb19"
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 DrWatson = "634d3b9d-ee7a-5ddf-bec9-22491ea816e1"
 FastGaussQuadrature = "442a2c76-b920-505d-bb47-c5924d526838"
 GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
@@ -16,8 +17,8 @@ SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 julia = "1.8"
 
 [extras]
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = ["Test", "SafeTestsets"]
