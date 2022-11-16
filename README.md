@@ -13,3 +13,27 @@
     year={2021},
     school={State University of New York at Buffalo}
     }
+
+### To (locally) reproduce this project, do the following:
+
+1. Download this code base.
+2. Open a Julia console and do:
+
+```julia
+   julia> using Pkg
+   julia> Pkg.add("DrWatson") # install globally, for using `quickactivate`
+   julia> Pkg.activate("path/to/this/project")
+   julia> Pkg.instantiate()
+```
+
+This will install all necessary packages for you to be able to run the scripts and
+everything should work out of the box, including correctly finding local paths.
+
+You may notice that most scripts start with the commands:
+
+```julia
+    using DrWatson
+    @quickactivate "SpectralBoundaryIntegralMethod"
+```
+
+which auto-activates the project and enables local path handling from DrWatson.
