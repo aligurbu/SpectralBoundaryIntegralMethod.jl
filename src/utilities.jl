@@ -87,6 +87,9 @@ end
     The analysis is performed on a gaussian grid in latitude and an equally
     spaced grid in longitude.
     The spherical harmonics basis functions are precomputed and stored.
+
+    Here, the coefficients are stored in this version of the analysis function
+    in the format we used in Matlab.
 """
 function sphericalHarmonicAnalysis(G::Array{Float64, 3},
                                    nlat::Int64, nlon::Int64,
