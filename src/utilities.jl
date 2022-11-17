@@ -50,6 +50,7 @@ end
     Spherical harmonic basis functions and weighted basis functions
 """
 function sphericalHarmonicBasisFun(nlat, nlon, thet, phi, weight)
+    N = nlat - 1
     # Trigonometric functions
     cos_m_phi = [cos.((m-1)*phi) for m=2:nlat]
     sin_m_phi = [sin.((m-1)*phi) for m=2:nlat]
@@ -68,6 +69,7 @@ end
     Spherical harmonic basis functions
 """
 function sphericalHarmonicBasisFun(nlat, nlon, thet, phi)
+    N = nlat - 1
     # Trigonometric functions
     cos_m_phi = [cos.((m-1)*phi) for m=2:nlat]
     sin_m_phi = [sin.((m-1)*phi) for m=2:nlat]
@@ -77,4 +79,36 @@ function sphericalHarmonicBasisFun(nlat, nlon, thet, phi)
     Pnm_cos_m_phi = [Pnm[m][:,n].*cos_m_phi[m-1] for m=2:N+1 for n=m:N+1]
     Pnm_sin_m_phi = [Pnm[m][:,n].*sin_m_phi[m-1] for m=2:N+1 for n=m:N+1]
     return Pnm, Pn0, Pnm_cos_m_phi, Pnm_sin_m_phi
+end
+
+"""
+    Spherical harmonic analysis on the components of the position, velocity, and
+    force fields.
+    The analysis is performed on a gaussian grid in latitude and an equally
+    spaced grid in longitude.
+    The spherical harmonics basis functions are precomputed and stored.
+"""
+function sphericalHarmonicAnalysis(G::Array{Float64, 3},
+                                   nlat::Int64, nlon::Int64,
+                                   Pn0_wg::Matrix{Float64},
+                                   Pnm_cos_m_phi_wg::Vector{Matrix{Float64}},
+                                   Pnm_sin_m_phi_wg::Vector{Matrix{Float64}})
+    N = nlat - 1
+    numDimension = size(G,3)
+    aG = zeros(Int((N+1)*(N+2)/2),numDimension)
+    bG = zeros(Int(N*(N+1)/2),numDimension)
+    k, l = 1, 1
+    for n=1:nlat
+        aG[k,:] = sum(G.*Pn0_wg[:,n], dims =[1 2])
+        k = k + 1
+        for m=2:n
+            aG[k,:] = sum(G.*Pnm_cos_m_phi_wg[l], dims = [1 2])
+            bG[l,:] = sum(G.*Pnm_sin_m_phi_wg[l], dims = [1 2])
+            k, l = k + 1, l + 1
+        end
+    end
+    aG = (2/nlon)*aG
+    bG = -(2/nlon)*bG
+    cG = [aG[:]; bG[:]]
+    return cG
 end
