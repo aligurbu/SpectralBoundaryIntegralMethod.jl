@@ -112,3 +112,30 @@ function sphericalHarmonicAnalysis(G::Array{Float64, 3},
     cG = [aG[:]; bG[:]]
     return cG
 end
+
+"""
+    Spherical harmonic analysis on the components of the position, velocity, and
+    force fields.
+    The analysis is performed on a gaussian grid in latitude grid and an equally
+    spaced grid in longitude.
+    The spherical harmonics basis functions are precomputed and stored.
+"""
+function sphericalHarmonicAnalysis!(cG::Matrix{Float64}, G::Array{Float64, 3},
+                                    nlat::Int64, nlon::Int64,
+                                    Pn0_wg::Matrix{Float64},
+                                    Pnm_cos_m_phi_wg::Vector{Matrix{Float64}},
+                                    Pnm_sin_m_phi_wg::Vector{Matrix{Float64}})
+    N = nlat - 1
+    lengthofCoeffVector = Int(N*(N+1)/2)
+    an0 = view(cG, 1:nlat, :)
+    anm = view(cG, nlat .+ (1:lengthofCoeffVector), :)
+    bnm = view(cG, nlat + lengthofCoeffVector .+ (1:lengthofCoeffVector), :)
+    for n=1:nlat
+        an0[n,:] = (2/nlon)*sum(G.*Pn0_wg[:,n], dims =[1 2])
+    end
+    for l=1:lengthofCoeffVector
+        anm[l,:] = (2/nlon)*sum(G.*Pnm_cos_m_phi_wg[l], dims = [1 2])
+        bnm[l,:] = -(2/nlon)*sum(G.*Pnm_sin_m_phi_wg[l], dims = [1 2])
+    end
+    return cG
+end
