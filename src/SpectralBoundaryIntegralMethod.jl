@@ -10,9 +10,14 @@ include(srcdir("utilities.jl"))
 include(srcdir("geometries.jl"))
 include(srcdir("visualize.jl"))
 
-export getSphereGeometry        # see srcdir("geometries.jl")
-export hat, gridOnSphere        # see srcdir("utilities.jl")
-export associatedLegendreFun    # see srcdir("utilities.jl")
-export visualizeGeometry        # see srcdir("visualize.jl")
+# see srcdir("geometries.jl")
+export getSphereGeometry
+## see srcdir("utilities.jl")
+export hat, gridOnSphere
+export associatedLegendreFun
+export sphericalHarmonicBasisFun
+export sphericalHarmonicAnalysis
+## see srcdir("visualize.jl")
+export visualizeGeometry
 
 end
