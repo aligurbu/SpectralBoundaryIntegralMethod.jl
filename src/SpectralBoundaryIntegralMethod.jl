@@ -17,6 +17,7 @@ export hat, gridOnSphere
 export associatedLegendreFun
 export sphericalHarmonicBasisFun
 export sphericalHarmonicAnalysis, sphericalHarmonicAnalysis!
+export sphericalHarmonicSynthesis!
 ## see srcdir("visualize.jl")
 export visualizeGeometry
 

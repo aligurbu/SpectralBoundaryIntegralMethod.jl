@@ -142,3 +142,31 @@ function sphericalHarmonicAnalysis!(cG::Matrix{Float64}, G::Array{Float64, 3},
     end
     return cG
 end
+
+
+"""
+    Spherical harmonic synthesis on the spherical harmonics coefficients.
+    The synthesis is performed on a gaussian latitude grid and an equally
+    spaced grid longitude.
+    The spherical harmonic basis functions are precomputed and stored.
+"""
+function sphericalHarmonicSynthesis!(G::Array{Float64, 3},
+                                     cG::Matrix{Float64},
+                                     nlat::Int64, nlon::Int64,
+                                     Pn0::Matrix{Float64},
+                                     Pnm_cos_m_phi::Vector{Matrix{Float64}},
+                                     Pnm_sin_m_phi::Vector{Matrix{Float64}})
+    N = nlat - 1
+    lengthofCoeffVector = Int(N*(N+1)/2)::Int64
+    dimension = size(cG,2)
+    an0 = view(cG, 1:nlat, :)
+    anm = view(cG, nlat .+ (1:lengthofCoeffVector), :)
+    bnm = view(cG, nlat + lengthofCoeffVector .+ (1:lengthofCoeffVector), :)
+
+    G += 0.5*sum(reshape(an0,1,nlat,dimension).*Pn0, dims = 2).*ones(1,nlon)
+    for kk = 1:lengthofCoeffVector
+        G += reshape(anm[kk,:], 1, 1, dimension).*Pnm_cos_m_phi[kk]
+        G -= reshape(bnm[kk,:], 1, 1, dimension).*Pnm_sin_m_phi[kk]
+    end
+    return G
+end
