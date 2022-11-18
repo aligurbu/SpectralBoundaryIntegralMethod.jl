@@ -125,3 +125,40 @@ function derivativesUnitNormalVector(unitNormalG,
                                 PP[:,:,3].*DiffUnitNormalG_phi[:,:,3]
     return grad_thet_UnitNormalG, grad_phi_UnitNormalG
 end
+
+"""
+    Compute the first and second fundamental form coefficients and
+    unit normal vector, derivative of the unit normal vector
+"""
+function coefficientsOfFundamentalForm(cG,
+                                       N, N_up, up_nlat, up_nlon,
+                                       up_thet, up_phi,
+                                       up_Pnm, up_DPnm, up_D2Pnm)
+
+
+    up_cG = upSampling(cG,N,N_up)
+
+    grad_thet_G, grad_phi_G,
+           grad_thet_thet_G, grad_phi_phi_G, grad_thet_phi_G =
+           gradient(up_cG, up_nlat, up_nlon, up_thet, up_phi,
+                    up_Pnm, up_DPnm, up_D2Pnm)
+
+    EE, FF, GG, WW, JGbrev = firstFundamentalFormCoeff(grad_thet_G, grad_phi_G)
+
+    unitNormalG = unitNormalVector(grad_thet_G, grad_phi_G, JGbrev)
+
+    grad_thet_UnitNormalG, grad_phi_UnitNormalG =
+         derivativesUnitNormalVector(unitNormalG,
+                                     grad_thet_G, grad_phi_G,
+                                     grad_thet_thet_G, grad_phi_phi_G,
+                                     grad_thet_phi_G,
+                                     JGbrev)
+
+    LL, MM, NN = secondFundamentalFormCoeff(grad_thet_thet_G,
+                                            grad_thet_phi_G,
+                                            grad_phi_phi_G,
+                                            unitNormalG)
+    return grad_thet_G, grad_phi_G, EE, FF, GG, WW, JGbrev,
+           unitNormalG, grad_thet_UnitNormalG, grad_phi_UnitNormalG,
+           LL, MM, NN
+end
