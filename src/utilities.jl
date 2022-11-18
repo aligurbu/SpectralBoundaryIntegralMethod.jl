@@ -17,6 +17,23 @@ function etaFun(N, I_thet)
 end
 
 """
+    Up-sampling the coefficients of the spherical harmonics expansions
+"""
+function upSampling(cG,N,N_up)
+    lengthofCoeffVector = Int(N*(N+1)/2)
+    an0 = view(cG, 1:N+1, :)
+    anm = view(cG, N+1 .+ (1:lengthofCoeffVector), :)
+    bnm = view(cG, N+1 + lengthofCoeffVector .+ (1:lengthofCoeffVector), :)
+
+    up_lengthofCoeffVector = Int(N_up*(N_up+1)/2)
+    up_cG = zeros((N_up+1)^2,size(cG,2))
+    up_cG[1:N+1, :] = an0
+    up_cG[N_up+1 .+ (1:lengthofCoeffVector), :] = anm
+    up_cG[N_up+1 + up_lengthofCoeffVector .+ (1:lengthofCoeffVector), :] = bnm
+    return up_cG
+end
+
+"""
     The quadrature grid points on the unit sphere
 """
 function gridOnSphere(N)
