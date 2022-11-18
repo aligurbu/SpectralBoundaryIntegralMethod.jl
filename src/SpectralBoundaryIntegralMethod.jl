@@ -18,6 +18,7 @@ export associatedLegendreFun, derivativesAssociatedLegendreFun
 export sphericalHarmonicBasisFun
 export sphericalHarmonicAnalysis, sphericalHarmonicAnalysis!
 export sphericalHarmonicSynthesis!
+export gradient
 ## see srcdir("visualize.jl")
 export visualizeGeometry
 

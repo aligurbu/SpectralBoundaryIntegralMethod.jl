@@ -273,3 +273,58 @@ function derivativesAssociatedLegendreFun(Pnm::Vector{Matrix{Float64}})
     end
     return DPnm, D2Pnm
 end
+
+
+"""
+    Gradient of a scalar field, G,
+
+            ∇_θ G = ∂G/∂θ;      ∇_ϕ G = 1/sinθ ∂G/∂ϕ
+
+    using its spherical harmonics coefficients cG, precomputed and stored.
+"""
+function gradient(cG, nlat, nlon, thet, phi, Pnm, DPnm, D2Pnm)
+    dimension = size(cG, 2)
+    N = nlat - 1
+    lengthofCoeffVector = Int(N*(N+1)/2)
+    an0 = reshape(cG[1:nlat, :], 1, nlat, dimension)
+    anm = cG[nlat .+ (1:lengthofCoeffVector), :]
+    bnm = cG[nlat + lengthofCoeffVector .+ (1:lengthofCoeffVector), :]
+
+    # Computing the derivative wrt theta and phi
+    derivative_thet_G = zeros(nlat, nlon, dimension)
+    derivative_phi_G = zeros(nlat, nlon, dimension)
+
+    derivative_thet_thet_G = zeros(nlat, nlon, dimension)
+    derivative_phi_phi_G = zeros(nlat, nlon, dimension)
+    derivative_thet_phi_G = zeros(nlat, nlon, dimension)
+
+    derivative_thet_G += 0.5*sum(an0.*DPnm[1], dims = 2).*ones(1,nlon)
+    derivative_thet_thet_G += 0.5*sum(an0.*D2Pnm[1], dims = 2).*ones(1,nlon)
+    kk = 1
+    for n=2:nlat
+        for m=2:n
+            anm_k = reshape(anm[kk,:], 1, 1, dimension)
+            bnm_k = reshape(bnm[kk,:], 1, 1, dimension)
+            derivative_thet_G += anm_k.*DPnm[m][:,n].*cos.((m-1)*phi) -
+                                 bnm_k.*DPnm[m][:,n].*sin.((m-1)*phi)
+            derivative_phi_G += (m-1)*Pnm[m][:,n].*
+                              (-anm_k.*sin.((m-1)*phi) - bnm_k.*cos.((m-1)*phi))
+            derivative_thet_thet_G += (anm_k.*D2Pnm[m][:,n].*cos.((m-1)*phi) -
+                                       bnm_k.*D2Pnm[m][:,n].*sin.((m-1)*phi))
+            derivative_phi_phi_G += (m-1)^2*Pnm[m][:,n].*
+                              (-anm_k.*cos.((m-1)*phi) + bnm_k.*sin.((m-1)*phi))
+            derivative_thet_phi_G += (m-1)*DPnm[m][:,n].*
+                              (-anm_k.*sin.((m-1)*phi) - bnm_k.*cos.((m-1)*phi))
+            kk += 1
+        end
+    end
+
+    grad_thet_G = derivative_thet_G
+    grad_phi_G = derivative_phi_G./sin.(thet)
+
+    grad_thet_thet_G = derivative_thet_thet_G
+    grad_phi_phi_G = derivative_phi_phi_G./(sin.(thet).^2)
+    grad_thet_phi_G = derivative_thet_phi_G./sin.(thet)
+    return grad_thet_G, grad_phi_G,
+           grad_thet_thet_G, grad_phi_phi_G, grad_thet_phi_G
+end
