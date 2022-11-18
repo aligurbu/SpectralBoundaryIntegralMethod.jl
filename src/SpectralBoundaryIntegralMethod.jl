@@ -6,10 +6,13 @@ using AssociatedLegendrePolynomials
 using GLMakie
 GLMakie.activate!()
 
+include(srcdir("thinShellMechanics.jl"))
 include(srcdir("utilities.jl"))
 include(srcdir("geometries.jl"))
 include(srcdir("visualize.jl"))
 
+## see srcdir("thinShellMechanics.jl")
+export firstFundamentalFormCoeff
 # see srcdir("geometries.jl")
 export getSphereGeometry
 ## see srcdir("utilities.jl")
