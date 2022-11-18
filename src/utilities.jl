@@ -29,6 +29,29 @@ function gridOnSphere(N)
 end
 
 """
+    The quadrature grid points on the unit sphere for the integration of the
+    weakly boundary integrals equations.
+    Also computing the relevant quantities on this quadratures such as the
+    spherical harmonic basis functions and the derivatives of the associated
+    Legendre functions.
+"""
+function integrationGridOnSphere(N, NGSphere)
+    I_nlat, I_nlon, I_thet, I_phi, I_weight = gridOnSphere(NGSphere);
+
+    I_eta = etaFun(N, I_thet)
+
+    I_Pnm, I_Pn0, I_Pnm_cos_m_phi, I_Pnm_sin_m_phi =
+                    sphericalHarmonicBasisFun(I_nlat, I_nlon, I_thet, I_phi);
+
+    I_DPnm, I_D2Pnm = derivativesAssociatedLegendreFun(I_Pnm);
+
+    return I_nlat, I_nlon, I_thet, I_phi, I_weight, I_eta
+           I_Pnm, I_Pn0, I_Pnm_cos_m_phi, I_Pnm_sin_m_phi,
+           I_DPnm, I_D2Pnm
+end
+
+
+"""
     Associated Legendre function
     Pnm[n, m](θ)
 """

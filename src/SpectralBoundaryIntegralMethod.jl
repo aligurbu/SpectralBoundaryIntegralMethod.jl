@@ -13,7 +13,7 @@ include(srcdir("visualize.jl"))
 # see srcdir("geometries.jl")
 export getSphereGeometry
 ## see srcdir("utilities.jl")
-export hat, gridOnSphere
+export hat, gridOnSphere, integrationGridOnSphere
 export associatedLegendreFun, derivativesAssociatedLegendreFun
 export sphericalHarmonicBasisFun
 export sphericalHarmonicAnalysis, sphericalHarmonicAnalysis!
