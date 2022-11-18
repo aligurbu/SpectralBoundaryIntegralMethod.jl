@@ -12,7 +12,7 @@ include(srcdir("geometries.jl"))
 include(srcdir("visualize.jl"))
 
 ## see srcdir("thinShellMechanics.jl")
-export firstFundamentalFormCoeff
+export firstFundamentalFormCoeff, unitNormalVector
 # see srcdir("geometries.jl")
 export getSphereGeometry
 ## see srcdir("utilities.jl")
