@@ -45,7 +45,7 @@ function integrationGridOnSphere(N, NGSphere)
 
     I_DPnm, I_D2Pnm = derivativesAssociatedLegendreFun(I_Pnm);
 
-    return I_nlat, I_nlon, I_thet, I_phi, I_weight, I_eta
+    return I_nlat, I_nlon, I_thet, I_phi, I_weight, I_eta,
            I_Pnm, I_Pn0, I_Pnm_cos_m_phi, I_Pnm_sin_m_phi,
            I_DPnm, I_D2Pnm
 end
