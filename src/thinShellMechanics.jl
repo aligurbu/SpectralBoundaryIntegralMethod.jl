@@ -13,6 +13,19 @@ function firstFundamentalFormCoeff(grad_thet_G, grad_phi_G)
 end
 
 """
+    The second fundamental form coefficients
+"""
+function secondFundamentalFormCoeff(grad_thet_thet_G,
+                                    grad_thet_phi_G,
+                                    grad_phi_phi_G,
+                                    unitNormalG)
+    LL = -sum(grad_thet_thet_G.* unitNormalG, dims = 3)
+    MM = -sum(grad_thet_phi_G.* unitNormalG, dims = 3)
+    NN = -sum(grad_phi_phi_G .* unitNormalG, dims = 3)
+    return LL, MM, NN
+end
+
+"""
     The unit normal to the undeformed surface
 """
 function unitNormalVector(grad_thet_G, grad_phi_G, JGbrev)
