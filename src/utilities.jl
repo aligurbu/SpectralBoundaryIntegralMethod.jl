@@ -10,6 +10,13 @@ function hat(x::Vector)
 end
 
 """
+    The regularization function for the integrals on a unit sphere
+"""
+function etaFun(N, I_thet)
+    I_eta = 2*sin.(I_thet/2).*sum(Plm(0:N, 0, cos.(I_thet)), dims = 2)
+end
+
+"""
     The quadrature grid points on the unit sphere
 """
 function gridOnSphere(N)
@@ -171,7 +178,7 @@ function sphericalHarmonicSynthesis!(G::Array{Float64, 3},
     return G
 end
 
-function derivativesAssociatedLegendreFun(Pnm)
+function derivativesAssociatedLegendreFun(Pnm::Vector{Matrix{Float64}})
     nlat = size(Pnm,1)
     DPnm = [zeros(nlat, nlat) for k=1:nlat]
     D2Pnm = [zeros(nlat, nlat) for k=1:nlat]
