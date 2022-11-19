@@ -1,7 +1,8 @@
 module SpectralBoundaryIntegralMethod
 using DrWatson
 using Revise
-using LinearAlgebra, FastGaussQuadrature
+using LinearAlgebra
+using FastGaussQuadrature: gausslegendre
 using AssociatedLegendrePolynomials
 using GLMakie
 GLMakie.activate!()
