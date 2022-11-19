@@ -16,7 +16,7 @@ export firstFundamentalFormCoeff, secondFundamentalFormCoeff
 export unitNormalVector, derivativesUnitNormalVector
 export coefficientsOfFundamentalForm
 # see srcdir("geometries.jl")
-export sphereGeometry, ellipsoidalGeometry
+export sphereGeometry, ellipsoidalGeometry, eggGeometry
 export RBCInitialGeometry, RBCDeformedGeometry
 ## see srcdir("utilities.jl")
 export hat, upSampling

@@ -145,3 +145,33 @@ function ellipsoidalGeometry(thet, phi, a, b, c;
     end
     return Xi
 end
+
+"""
+    Egg shape taken from http://www.mathematische-basteleien.de/eggcurves.htm
+    from the section "From oval to the egg shape"
+    z^2 + x^2*t(z) = 1;
+    t(z) = 1 + bet*z
+    becomes the following when parametrized in spherical coordinates
+"""
+function eggGeometry(thet, phi;
+                     Position = [0; 0; 0],
+                     OrientVec = [0; 0; 0])
+
+    nlat = length(thet)
+    nlon = length(phi)
+    Xi = zeros(nlat, nlon, 3)
+
+    alph = 0.2
+    Xi[:,:,1] = sin.(thet).*cos.(phi)
+    Xi[:,:,2] = sin.(thet).*sin.(phi)
+    Xi[:,:,3] = (1 .+ alph*cos.(thet)).*cos.(thet).*ones(1,nlon)
+
+    Orientation = exp(hat(OrientVec*pi/2))
+    for m = 1:nlat
+        for n = 1:nlon
+            x = Position + Orientation*Xi[m,n,:]
+            Xi[m,n,:] = x
+        end
+    end
+    return Xi
+end
