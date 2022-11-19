@@ -3,7 +3,7 @@
     Construct a sphere geometry on the given (thet, phi) grid and Radius
 
 """
-function getSphereGeometry(thet, phi, Radius)
+function sphereGeometry(thet, phi, Radius)
     nlat = length(thet)
     nlon = length(phi)
     Xi = zeros(nlat, nlon, 3)
@@ -19,9 +19,9 @@ end
     Position    = Position of center of mass
     OrientVec = Orientation around 'OrientVec'
 """
-function getSphereGeometry(thet, phi, Radius;
-                           Position = [0; 0; 0],
-                           OrientVec = [0; 0; 0])
+function sphereGeometry(thet, phi, Radius;
+                        Position = [0; 0; 0],
+                        OrientVec = [0; 0; 0])
 
     nlat = length(thet)
     nlon = length(phi)

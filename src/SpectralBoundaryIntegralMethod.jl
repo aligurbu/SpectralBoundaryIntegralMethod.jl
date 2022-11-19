@@ -16,7 +16,7 @@ export firstFundamentalFormCoeff, secondFundamentalFormCoeff
 export unitNormalVector, derivativesUnitNormalVector
 export coefficientsOfFundamentalForm
 # see srcdir("geometries.jl")
-export getSphereGeometry
+export sphereGeometry
 ## see srcdir("utilities.jl")
 export hat, upSampling
 export gridOnSphere, integrationGridOnSphere
