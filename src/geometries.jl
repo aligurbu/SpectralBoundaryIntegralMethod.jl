@@ -72,3 +72,32 @@ function RBCInitialGeometry(thet, phi;
     end
     return Xi
 end
+
+"""
+    Deformed shape red blood cell shape
+    Bending about y-axis followed by twist about x axis
+    rho = radius of curvature
+    twist = twist
+"""
+function RBCDeformedGeometry(thet,phi,rho,twist)
+
+    # Initial undeformed shape of RBC
+    Xi = RBCInitialGeometry(thet, phi)
+    alpha = 1.3858189
+
+    xi = zeros(size(Xi))
+    for m = 1:size(Xi,1)
+        for n = 1:size(Xi,2)
+            XX = Xi[m,n,:]
+            vartheta = XX[1]/rho
+            xx = [(rho-XX[3])*sin(vartheta);
+                  XX[2];
+                  rho-(rho-XX[3])*cos(vartheta)]
+            rotvec = [0 0 0;
+                      0 0 -twist;
+                      0 twist 0]*(XX[1]/alpha)
+            xi[m,n,:] = exp(rotvec)*xx
+        end
+    end
+    return xi
+end
