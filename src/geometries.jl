@@ -178,7 +178,7 @@ end
 
 
 """
-    The shape is taken from
+    The star shape is taken from
     "A fast algorithm for simulating vesicle flows in three dimensions"
     <https://www.sciencedirect.com/science/article/pii/S0021999111002063?via%3Dihub>
 """
@@ -190,5 +190,22 @@ function starVesicleGeometry(thet,phi)
     Xi[:,:,1] = rho.*(sin.(thet).*cos.(phi))
     Xi[:,:,2] = rho.*(sin.(thet).*sin.(phi))
     Xi[:,:,3] = rho.*cos.(thet)
+    return Xi
+end
+
+
+"""
+    The peanut shape is taken from
+    "A fast algorithm for simulating vesicle flows in three dimensions"
+    <https://www.sciencedirect.com/science/article/pii/S0021999111002063?via%3Dihub>
+"""
+function peanutVesicleGeometry(thet,phi)
+    LL = associatedLegendreFun(2, thet)[1][:,3]
+    Y20 = LL./(sqrt(2*pi))
+    rho = 1 .+ Y20
+    Xi = zeros(length(thet), length(phi), 3)
+    Xi[:,:,1] = rho.*(sin.(thet).*cos.(phi))
+    Xi[:,:,2] = rho.*(sin.(thet).*sin.(phi))
+    Xi[:,:,3] = rho.*cos.(thet).*ones(1,length(phi))
     return Xi
 end
