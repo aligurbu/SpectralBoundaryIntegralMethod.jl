@@ -41,6 +41,28 @@ function sphereGeometry(thet, phi, Radius;
 end
 
 """
+    Deformed spherical geometry = twist about x axis
+"""
+function sphereGeometry(thet,phi,Radius,twist)
+    # Initial undeformed spherical shape
+    Xi = sphereGeometry(thet, phi, Radius)
+    # Twisting
+    xi = zeros(size(Xi))
+    for m = 1:size(Xi,1)
+        for n = 1:size(Xi,2)
+            XX = Xi[m,n,:]
+            rotvec = [0 0 0;
+                      0 0 -twist;
+                      0 twist 0]*XX[1]
+            xi[m,n,:] = exp(rotvec)*XX
+        end
+    end
+    return xi
+end
+
+
+
+"""
     Undeformed shape of red blood cell (RBC) taken from
     Pozrikidis, C. (2005). "Axisymmetric motion of a file of red blood cells
     through capillaries." Physics of Fluids, 17(3) [Equation (31)].
