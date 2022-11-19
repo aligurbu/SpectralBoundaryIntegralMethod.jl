@@ -2,20 +2,6 @@
 """
     Construct a sphere geometry on the given (thet, phi) grid and Radius
 
-"""
-function sphereGeometry(thet, phi, Radius)
-    nlat = length(thet)
-    nlon = length(phi)
-    Xi = zeros(nlat, nlon, 3)
-    Xi[:,:,1] = Radius*sin.(thet).*cos.(phi)
-    Xi[:,:,2] = Radius*sin.(thet).*sin.(phi)
-    Xi[:,:,3] = Radius*cos.(thet).*ones(1,nlon)
-    return Xi
-end
-
-"""
-    Construct a sphere geometry on the given (thet, phi) grid and Radius
-
     Position    = Position of center of mass
     OrientVec = Orientation around 'OrientVec'
 """
