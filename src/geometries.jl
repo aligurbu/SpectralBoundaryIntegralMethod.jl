@@ -175,3 +175,20 @@ function eggGeometry(thet, phi;
     end
     return Xi
 end
+
+
+"""
+    The shape is taken from
+    "A fast algorithm for simulating vesicle flows in three dimensions"
+    <https://www.sciencedirect.com/science/article/pii/S0021999111002063?via%3Dihub>
+"""
+function starVesicleGeometry(thet,phi)
+    LL = associatedLegendreFun(4, thet)[3][:,4]
+    Y32 = (LL.*cos.(2*phi))/(sqrt(2*pi))
+    rho = 1 .+ exp.(-3*Y32)
+    Xi = zeros(length(thet), length(phi), 3)
+    Xi[:,:,1] = rho.*(sin.(thet).*cos.(phi))
+    Xi[:,:,2] = rho.*(sin.(thet).*sin.(phi))
+    Xi[:,:,3] = rho.*cos.(thet)
+    return Xi
+end
