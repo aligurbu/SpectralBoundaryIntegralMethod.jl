@@ -51,8 +51,8 @@ function visualizeGeometry(Xi, cXi, nlat, nlon,
                   backlight = 1.0f0)
     wireframe!(ax, Xiplot[:,:,1], Xiplot[:,:,2], Xiplot[:,:,3];
                overdraw = true, transparency = true, color = (:black, 0.7))
-#     scatter!(ax, Xiplot[:,:,1][:], Xiplot[:,:,2][:], Xiplot[:,:,3][:];
-#              color = :black, transparency = true, overdraw = true, markersize = 10)
+    scatter!(ax, Xiplot[:,:,1][:], Xiplot[:,:,2][:], Xiplot[:,:,3][:];
+             color = :black, transparency = true, overdraw = true, markersize = 10)
     colsize!(fig.layout, 1, Aspect(1, 1.0))
     fig
 end

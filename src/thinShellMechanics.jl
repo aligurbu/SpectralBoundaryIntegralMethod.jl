@@ -8,8 +8,8 @@ function firstFundamentalFormCoeff(grad_thet_G, grad_phi_G)
     FF = sum(grad_thet_G.*grad_phi_G, dims = 3)
     GG = sum(grad_phi_G.*grad_phi_G, dims = 3)
     WW = EE.*GG - FF.^2
-    Jbrev = sqrt.(WW) # Jacobian determinant
-    return EE, FF, GG, WW, Jbrev
+    JGbrev = sqrt.(WW) # Jacobian determinant
+    return EE, FF, GG, WW, JGbrev
 end
 
 """
