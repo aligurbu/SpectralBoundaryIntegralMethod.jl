@@ -91,8 +91,8 @@ function RBCDeformedGeometry(thet,phi,rho,twist)
     alpha = 1.3858189
 
     xi = zeros(size(Xi))
-    for m = 1:size(Xi,1)
-        for n = 1:size(Xi,2)
+    for m in axes(Xi,1)
+        for n in axes(Xi,2)
             XX = Xi[m,n,:]
             vartheta = XX[1]/rho
             xx = [(rho-XX[3])*sin(vartheta);
