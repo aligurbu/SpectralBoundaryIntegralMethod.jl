@@ -1,7 +1,7 @@
-
-
 """
-    Produce a skew-symmetric matrix using the components of x vector
+    hat(x::Vector)
+
+Produce a skew-symmetric matrix using the components of x vector
 """
 function hat(x::Vector)
     X = [   0  -x[3]  x[2]
@@ -10,16 +10,20 @@ function hat(x::Vector)
 end
 
 """
-    The regularization function for the integrals on a unit sphere
+    etaFun(N, I_thet)
+
+The regularization function for the integrals on a unit sphere
 """
 function etaFun(N, I_thet)
     I_eta = 2*sin.(I_thet/2).*sum(Plm(0:N, 0, cos.(I_thet)), dims = 2)
 end
 
 """
-    Up-sampling the coefficients of the spherical harmonics expansions
+    upSampling(cG, N, N_up)
+
+Up-sampling the coefficients of the spherical harmonics expansions
 """
-function upSampling(cG,N,N_up)
+function upSampling(cG, N, N_up)
     lengthofCoeffVector = Int(N*(N+1)/2)
     an0 = view(cG, 1:N+1, :)
     anm = view(cG, N+1 .+ (1:lengthofCoeffVector), :)
@@ -34,7 +38,9 @@ function upSampling(cG,N,N_up)
 end
 
 """
-    The quadrature grid points on the unit sphere
+    gridOnSphere(N)
+
+The quadrature grid points on the unit sphere
 """
 function gridOnSphere(N)
     nlat, nlon = N+1, 2N+1
@@ -46,11 +52,13 @@ function gridOnSphere(N)
 end
 
 """
-    The quadrature grid points on the unit sphere for the integration of the
-    weakly boundary integrals equations.
-    Also computing the relevant quantities on this quadratures such as the
-    spherical harmonic basis functions and the derivatives of the associated
-    Legendre functions.
+    integrationGridOnSphere(N, NGSphere)
+
+The quadrature grid points on the unit sphere for the integration of the
+weakly boundary integrals equations.
+Also computing the relevant quantities on this quadratures such as the
+spherical harmonic basis functions and the derivatives of the associated
+Legendre functions.
 """
 function integrationGridOnSphere(N, NGSphere)
     I_nlat, I_nlon, I_thet, I_phi, I_weight = gridOnSphere(NGSphere);
@@ -69,24 +77,30 @@ end
 
 
 """
-    Associated Legendre function
-    Pnm[n, m](θ)
+    associatedLegendreFun(n::Int64, θ::Float64)
+
+Associated Legendre function
+Pnm[n, m](θ)
 """
 function associatedLegendreFun(n::Int64, θ::Float64)
     CondonShortleyPhase = (-1).^[0:n;]'
     legendre(LegendreOrthoNorm(), 0:n, 0:n, cos(θ)).*CondonShortleyPhase
 end
 """
-    Associated Legendre function
-    Pnm[n, m](π)
+    associatedLegendreFun(n::Int64, θ::Irrational{:π})
+
+Associated Legendre function
+Pnm[n, m](π)
 """
 function associatedLegendreFun(n::Int64, θ::Irrational{:π})
     θ = convert(Float64,θ)
     associatedLegendreFun(n, θ)
 end
 """
-    Associated Legendre function
-    Pnm[m][θ, n]
+    associatedLegendreFun(n::Int64, θ::Vector{Float64})
+
+Associated Legendre function
+Pnm[m][θ, n]
 """
 function associatedLegendreFun(n::Int64, θ::Vector{Float64})
     Pnm = legendre(LegendreOrthoNorm(), 0:n, 0:n, cos.(θ))
@@ -94,13 +108,14 @@ function associatedLegendreFun(n::Int64, θ::Vector{Float64})
 end
 
 """
-    Spherical harmonic basis functions and weighted basis functions
+    sphericalHarmonicBasisFun(N, thet, phi, weight)
+
+Spherical harmonic basis functions and weighted basis functions
 """
-function sphericalHarmonicBasisFun(nlat, nlon, thet, phi, weight)
-    N = nlat - 1
+function sphericalHarmonicBasisFun(N, thet, phi, weight)
     # Trigonometric functions
-    cos_m_phi = [cos.((m-1)*phi) for m=2:nlat]
-    sin_m_phi = [sin.((m-1)*phi) for m=2:nlat]
+    cos_m_phi = [cos.((m-1)*phi) for m=2:N+1]
+    sin_m_phi = [sin.((m-1)*phi) for m=2:N+1]
 
     Pnm = associatedLegendreFun(N, thet)
     Pn0 = Pnm[1]
@@ -113,13 +128,14 @@ function sphericalHarmonicBasisFun(nlat, nlon, thet, phi, weight)
                 Pn0_wg, Pnm_cos_m_phi_wg, Pnm_sin_m_phi_wg
 end
 """
-    Spherical harmonic basis functions
+    sphericalHarmonicBasisFun(N, thet, phi)
+
+Spherical harmonic basis functions
 """
-function sphericalHarmonicBasisFun(nlat, nlon, thet, phi)
-    N = nlat - 1
+function sphericalHarmonicBasisFun(N, thet, phi)
     # Trigonometric functions
-    cos_m_phi = [cos.((m-1)*phi) for m=2:nlat]
-    sin_m_phi = [sin.((m-1)*phi) for m=2:nlat]
+    cos_m_phi = [cos.((m-1)*phi) for m=2:N+1]
+    sin_m_phi = [sin.((m-1)*phi) for m=2:N+1]
 
     Pnm = associatedLegendreFun(N, thet)
     Pn0 = Pnm[1]
@@ -129,14 +145,19 @@ function sphericalHarmonicBasisFun(nlat, nlon, thet, phi)
 end
 
 """
-    Spherical harmonic analysis on the components of the position, velocity, and
-    force fields.
-    The analysis is performed on a gaussian grid in latitude and an equally
-    spaced grid in longitude.
-    The spherical harmonics basis functions are precomputed and stored.
+    sphericalHarmonicAnalysis(G::Array{Float64, 3},
+                              nlat::Int64, nlon::Int64,
+                              Pn0_wg::Matrix{Float64},
+                              Pnm_cos_m_phi_wg::Vector{Matrix{Float64}},
+                              Pnm_sin_m_phi_wg::Vector{Matrix{Float64}})
 
-    Here, the coefficients are stored in this version of the analysis function
-    in the format we used in Matlab.
+Spherical harmonic analysis on the components of the position, velocity, and
+force fields.
+The analysis is performed on a gaussian grid in latitude and an equally
+spaced grid in longitude.
+The spherical harmonics basis functions are precomputed and stored.
+
+In this version of the analysis function, the coefficients are stored in the format we used in Matlab.
 """
 function sphericalHarmonicAnalysis(G::Array{Float64, 3},
                                    nlat::Int64, nlon::Int64,
@@ -147,14 +168,14 @@ function sphericalHarmonicAnalysis(G::Array{Float64, 3},
     numDimension = size(G,3)
     aG = zeros(Int((N+1)*(N+2)/2),numDimension)
     bG = zeros(Int(N*(N+1)/2),numDimension)
-    k, l = 1, 1
+    k, ℓ = 1, 1
     for n=1:nlat
         aG[k,:] = sum(G.*Pn0_wg[:,n], dims =[1 2])
         k = k + 1
         for m=2:n
-            aG[k,:] = sum(G.*Pnm_cos_m_phi_wg[l], dims = [1 2])
-            bG[l,:] = sum(G.*Pnm_sin_m_phi_wg[l], dims = [1 2])
-            k, l = k + 1, l + 1
+            aG[k,:] = sum(G.*Pnm_cos_m_phi_wg[ℓ], dims = [1 2])
+            bG[ℓ,:] = sum(G.*Pnm_sin_m_phi_wg[ℓ], dims = [1 2])
+            k, ℓ = k + 1, ℓ + 1
         end
     end
     aG = (2/nlon)*aG
@@ -164,11 +185,17 @@ function sphericalHarmonicAnalysis(G::Array{Float64, 3},
 end
 
 """
-    Spherical harmonic analysis on the components of the position, velocity, and
-    force fields.
-    The analysis is performed on a gaussian grid in latitude grid and an equally
-    spaced grid in longitude.
-    The spherical harmonics basis functions are precomputed and stored.
+    sphericalHarmonicAnalysis!(cG::Matrix{Float64}, G::Array{Float64, 3},
+                               nlat::Int64, nlon::Int64,
+                               Pn0_wg::Matrix{Float64},
+                               Pnm_cos_m_phi_wg::Vector{Matrix{Float64}},
+                               Pnm_sin_m_phi_wg::Vector{Matrix{Float64}})
+
+Spherical harmonic analysis on the components of the position, velocity, and
+force fields.
+The analysis is performed on a gaussian grid in latitude grid and an equally
+spaced grid in longitude.
+The spherical harmonics basis functions are precomputed and stored.
 """
 function sphericalHarmonicAnalysis!(cG::Matrix{Float64}, G::Array{Float64, 3},
                                     nlat::Int64, nlon::Int64,
@@ -183,19 +210,26 @@ function sphericalHarmonicAnalysis!(cG::Matrix{Float64}, G::Array{Float64, 3},
     for n=1:nlat
         an0[n,:] = (2/nlon)*sum(G.*Pn0_wg[:,n], dims =[1 2])
     end
-    for l=1:lengthofCoeffVector
-        anm[l,:] = (2/nlon)*sum(G.*Pnm_cos_m_phi_wg[l], dims = [1 2])
-        bnm[l,:] = -(2/nlon)*sum(G.*Pnm_sin_m_phi_wg[l], dims = [1 2])
+    for ℓ =1:lengthofCoeffVector
+        anm[ℓ,:] = (2/nlon)*sum(G.*Pnm_cos_m_phi_wg[ℓ], dims = [1 2])
+        bnm[ℓ,:] = -(2/nlon)*sum(G.*Pnm_sin_m_phi_wg[ℓ], dims = [1 2])
     end
     return cG
 end
 
 
 """
-    Spherical harmonic synthesis on the spherical harmonics coefficients.
-    The synthesis is performed on a gaussian latitude grid and an equally
-    spaced grid longitude.
-    The spherical harmonic basis functions are precomputed and stored.
+    sphericalHarmonicSynthesis!(G::Array{Float64, 3},
+                                cG::Matrix{Float64},
+                                nlat::Int64, nlon::Int64,
+                                Pn0::Matrix{Float64},
+                                Pnm_cos_m_phi::Vector{Matrix{Float64}},
+                                Pnm_sin_m_phi::Vector{Matrix{Float64}})
+
+Spherical harmonic synthesis on the spherical harmonics coefficients.
+The synthesis is performed on a gaussian latitude grid and an equally
+spaced grid longitude.
+The spherical harmonic basis functions are precomputed and stored.
 """
 function sphericalHarmonicSynthesis!(G::Array{Float64, 3},
                                      cG::Matrix{Float64},
@@ -218,6 +252,10 @@ function sphericalHarmonicSynthesis!(G::Array{Float64, 3},
     return G
 end
 
+"""
+    derivativesAssociatedLegendreFun(Pnm::Vector{Matrix{Float64}})
+
+"""
 function derivativesAssociatedLegendreFun(Pnm::Vector{Matrix{Float64}})
     nlat = size(Pnm,1)
     DPnm = [zeros(nlat, nlat) for k=1:nlat]
@@ -293,12 +331,14 @@ end
 
 
 """
-    The first and second order gradient of a scalar field, G,
+    gradient(cG, nlat, nlon, thet, phi, Pnm, DPnm, D2Pnm)
+
+The first and second order gradient of a scalar field, G,
 
     ∇_θ G = ∂G/∂θ;      ∇_ϕ G = 1/sinθ ∂G/∂ϕ
     ∇_θθ G = ∂²G/∂θ²;   ∇_θϕ G = 1/sinθ ∂²G/∂θ∂ϕ;   ∇_ϕϕ G = 1/(sinθ)² ∂²G/∂ϕ²
 
-    using its spherical harmonics coefficients cG, precomputed and stored.
+using its spherical harmonics coefficients cG, precomputed and stored.
 """
 function gradient(cG, nlat, nlon, thet, phi, Pnm, DPnm, D2Pnm)
     dimension = size(cG, 2)
@@ -348,11 +388,13 @@ function gradient(cG, nlat, nlon, thet, phi, Pnm, DPnm, D2Pnm)
 end
 
 """
-    Gradient of a scalar field, G,
+    gradient(cG, nlat, nlon, thet, phi, Pnm, DPnm)
+
+Gradient of a scalar field, G,
 
     ∇_θ G = ∂G/∂θ;      ∇_ϕ G = 1/sinθ ∂G/∂ϕ
 
-    using its spherical harmonics coefficients cG, precomputed and stored.
+using its spherical harmonics coefficients cG, precomputed and stored.
 """
 function gradient(cG, nlat, nlon, thet, phi, Pnm, DPnm)
     dimension = size(cG, 2)
