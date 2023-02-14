@@ -21,7 +21,7 @@ export sphereGeometry, ellipsoidalGeometry
 export eggGeometry, starVesicleGeometry, peanutVesicleGeometry
 export RBCInitialGeometry, RBCDeformedGeometry
 ## see srcdir("utilities.jl")
-export hat, upSampling
+export hat, etaFun, upSampling
 export gridOnSphere, integrationGridOnSphere
 export associatedLegendreFun, derivativesAssociatedLegendreFun
 export sphericalHarmonicBasisFun
