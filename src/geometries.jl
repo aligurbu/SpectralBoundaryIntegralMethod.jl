@@ -34,8 +34,8 @@ function sphereGeometry(thet,phi,Radius,twist)
     Xi = sphereGeometry(thet, phi, Radius)
     # Twisting
     xi = zeros(size(Xi))
-    for m = 1:size(Xi,1)
-        for n = 1:size(Xi,2)
+    for m in axes(Xi,1)
+        for n in axes(Xi,2)
             XX = Xi[m,n,:]
             rotvec = [0 0 0;
                       0 0 -twist;
