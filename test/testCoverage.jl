@@ -10,7 +10,7 @@ hat([1; 2; 3])
 N = 4
 nlat, nlon, thet, phi, weight = gridOnSphere(N)
 
-Xi = ellipsoidGeometry(thet, phi, 1, 2, 0.5); # see srcdir("geometries.jl")
+Xi = ellipsoidalGeometry(thet, phi, 1, 2, 0.5); # see srcdir("geometries.jl")
 Xi[:,:,1] # x-components
 Xi[:,:,2] # y-components
 Xi[:,:,3] # z-components
@@ -29,7 +29,8 @@ Pnm[5]
 
 
 # Spherical harmonic basis functions
-Pnm, Pn0, Pnm_cos_m_phi, Pnm_sin_m_phi = sphericalHarmonicBasisFun(nlat, nlon, thet, phi);
+Pnm, Pn0, Pnm_cos_m_phi, Pnm_sin_m_phi = 
+                                        sphericalHarmonicBasisFun(N, thet, phi);
 Pnm # Pnm[m][θ, n]
 Pn0 # = Pnm[1]
 Pnm_cos_m_phi[1] ≈ Pnm[2][:,2].*cos.((2-1)*phi)
@@ -47,7 +48,7 @@ Pnm_sin_m_phi[10] ≈ Pnm[5][:,5].*sin.((5-1)*phi)
 
 Pnm, Pn0, Pnm_cos_m_phi, Pnm_sin_m_phi,
      Pn0_wg, Pnm_cos_m_phi_wg, Pnm_sin_m_phi_wg =
-                sphericalHarmonicBasisFun(nlat, nlon, thet, phi, weight);
+                                sphericalHarmonicBasisFun(N, thet, phi, weight);
 Pn0_wg # = Pn0.*weight
 Pnm_cos_m_phi_wg # = Pnm_cos_m_phi.*weight
 Pnm_sin_m_phi_wg # = Pnm_sin_m_phi.*weight
@@ -93,13 +94,13 @@ end
 
 Pnm, Pn0, Pnm_cos_m_phi, Pnm_sin_m_phi,
      Pn0_wg, Pnm_cos_m_phi_wg, Pnm_sin_m_phi_wg =
-                       sphericalHarmonicBasisFun(nlat, nlon, thet, phi, weight);
+                                sphericalHarmonicBasisFun(N, thet, phi, weight);
 
-Xi = ellipsoidGeometry(thet, phi, 1, 0.5, 2);
+Xi = ellipsoidalGeometry(thet, phi, 1, 0.5, 2);
 
 thet_equal = [range(0,pi,nlat);];
 Eq_Pnm, Eq_Pn0, Eq_Pnm_cos_m_phi, Eq_Pnm_sin_m_phi =
-                sphericalHarmonicBasisFun(nlat, nlon, thet_equal, phi);
+                                  sphericalHarmonicBasisFun(N, thet_equal, phi);
 
 cXi = zeros((N+1)^2,3);
 cXi = sphericalHarmonicAnalysis!(cXi, Xi, nlat, nlon, Pn0_wg,
